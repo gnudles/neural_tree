@@ -27,7 +27,7 @@ class RangeNodeImpl extends NodeImpl {
     int id = map['id'];
     int outWidth = map['outWidth'];
     Int32List dependencies =
-        Int32List.fromList(map['dependencies'] as List<int>);
+        Int32List.fromList((map['dependencies'] as List<dynamic>).cast());
     String name = map['name'];
     int from = map['from'];
     int inWidth = map['inWidth'];

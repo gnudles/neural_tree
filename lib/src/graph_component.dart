@@ -48,8 +48,9 @@ class GraphComponent extends Component {
   ComponentBackwardProducts backPropagate(
       ForwardProducts fwdProducts, FVector err) {
     return GraphComponentBackwardProducts(mGraph
-        .backPropagateByError(fwdProducts as MultiGraphForwardFlow, [err]));
+        .backPropagateByError((fwdProducts as GraphComponentForwardProducts).flow , [err]));
   }
+  
 
   @override
   FVector feedForward(FVector input) {
