@@ -47,7 +47,26 @@ abstract class MultiInputNode extends Node {
     return id;
   }
 }
+/*
+// a 'group' of indices
+abstract class MultiInputGroupNode extends Node {
+  final List<Node> inputNodes;
+  MultiInputGroupNode(this.inputNodes, int width, String name) : super(width, name);
+  int assignId(int id, Map<String, int>? inputMapping,
+      List<NodeImpl> executeChain, Map<Node, int> assigned) {
 
+  }
+}
+// a 'group' of indices
+abstract class SingleInputGroupNode extends Node {
+  final List<Node> inputNodes;
+  SingleInputGroupNode(this.inputNodes, int width, String name) : super(width, name);
+  int assignId(int id, Map<String, int>? inputMapping,
+      List<NodeImpl> executeChain, Map<Node, int> assigned) {
+
+  }
+}
+*/
 class InputNode extends Node {
   InputNode(int width, String name) : super(width, name);
 

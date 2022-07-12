@@ -73,14 +73,14 @@ class MaxSelectNodeImpl extends NodeImpl {
   @override
   void backPropagate(List<BackwardProducts> backProducts, List<Delta?> deltas,
       List<FVector?> propagatedErrors, List<ForwardProducts> fwdProducts) {
-    var muxErrors = propagatedErrors[id]!;
+    var maxErrors = propagatedErrors[id]!;
     var fwd = fwdProducts[id] as MaxSelectForwardProducts;
     for (int i = 0; i < outWidth; ++i) {
       int d = fwd.selectors[i];
       if (propagatedErrors[d] == null) {
         propagatedErrors[d] = FVector.zero(outWidth);
       }
-      propagatedErrors[d]![i] += muxErrors[i];
+      propagatedErrors[d]![i] += maxErrors[i];
     }
   }
 
