@@ -1,13 +1,6 @@
 import 'dart:math';
 
 import 'package:neural_tree/neural_tree.dart';
-import 'package:neural_tree/src/activation_function.dart';
-import 'package:neural_tree/src/biclique.dart';
-import 'package:neural_tree/src/biregular.dart';
-import 'package:neural_tree/src/linalg.dart';
-import 'package:neural_tree/src/multi_graph.dart';
-import 'package:neural_tree/src/node.dart';
-import 'package:neural_tree/src/nodes/component_node.dart';
 import 'package:test/test.dart';
 
 void main() {
