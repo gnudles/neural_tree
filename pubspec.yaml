@@ -1,6 +1,6 @@
 name: neural_tree
 description: Fast Artificial Neural Network Library (Based on SIMD and GPU computations)
-version: 1.0.2
+version: 1.0.3
 repository: https://github.com/gnudles/neural_tree
 
 environment:

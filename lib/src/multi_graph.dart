@@ -7,9 +7,11 @@ import 'package:neural_tree/src/nodes/component_node.dart';
 import 'package:neural_tree/src/nodes/joiner_node.dart';
 import 'package:neural_tree/src/nodes/max_select_node.dart';
 import 'package:neural_tree/src/nodes/recycler_node.dart';
-
+import 'package:neural_tree/src/nodes/reverse_node.dart';
+import 'package:neural_tree/src/nodes/range_node.dart';
 import 'component.dart';
-import 'nodes/range_node.dart';
+
+
 
 List<NodeImpl> sortChain(
     List<NodeImpl> tempChain, List<int> availableDependencies) {
@@ -38,6 +40,7 @@ Map<String, NodeImpl Function(Map<String, dynamic>)> nodeTypeLoaders = {
   'joiner' : (map) => JoinerNodeImpl.fromJson(map),
   'max_select' : (map) => MaxSelectNodeImpl.fromJson(map),
   'range' : (map) => RangeNodeImpl.fromJson(map),
+  'reverse': (map) => ReverseNodeImpl.fromJson(map),
 };
 
 /// Graph with multiple inputs and multiple outputs
