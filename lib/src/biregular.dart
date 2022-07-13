@@ -19,6 +19,9 @@ class BiregularDelta implements Delta {
   final FVector _bias;
   BiregularDelta(this._weight, this._bias);
 
+  factory BiregularDelta.fromJson(Map<String, dynamic> map) {
+    return BiregularDelta(FVector.fromJson(map['w']),FVector.fromJson(map['b']));
+  }
 
   @override
   void add(Delta other) {
@@ -32,6 +35,10 @@ class BiregularDelta implements Delta {
   void scale(double factor) {
     _weight.scale(factor);
     _bias.scale(factor);
+  }
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type':'biregular', 'w': _weight.toJson(), 'b': _bias.toJson()};
   }
 }
 

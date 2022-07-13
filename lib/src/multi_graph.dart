@@ -11,8 +11,6 @@ import 'package:neural_tree/src/nodes/reverse_node.dart';
 import 'package:neural_tree/src/nodes/range_node.dart';
 import 'component.dart';
 
-
-
 List<NodeImpl> sortChain(
     List<NodeImpl> tempChain, List<int> availableDependencies) {
   List<NodeImpl> executeChain = [];
@@ -35,11 +33,11 @@ List<NodeImpl> sortChain(
 
 Map<String, NodeImpl Function(Map<String, dynamic>)> nodeTypeLoaders = {
   'cherry': (map) => CherryPickNodeImpl.fromJson(map),
-  'component' : (map) => ComponentNodeImpl.fromJson(map),
-  'recycler' : (map) => RecyclerNodeImpl.fromJson(map),
-  'joiner' : (map) => JoinerNodeImpl.fromJson(map),
-  'max_select' : (map) => MaxSelectNodeImpl.fromJson(map),
-  'range' : (map) => RangeNodeImpl.fromJson(map),
+  'component': (map) => ComponentNodeImpl.fromJson(map),
+  'recycler': (map) => RecyclerNodeImpl.fromJson(map),
+  'joiner': (map) => JoinerNodeImpl.fromJson(map),
+  'max_select': (map) => MaxSelectNodeImpl.fromJson(map),
+  'range': (map) => RangeNodeImpl.fromJson(map),
   'reverse': (map) => ReverseNodeImpl.fromJson(map),
 };
 
@@ -72,8 +70,9 @@ class MultiGraph {
     int totalInputs = map["totalInputs"];
     int totalOutputs = map["totalOutputs"];
 
-    List<NodeImpl> executeChain =
-        (map["executeChain"] as List<dynamic>).cast<Map<String, dynamic>>().map((jnode) {
+    List<NodeImpl> executeChain = (map["executeChain"] as List<dynamic>)
+        .cast<Map<String, dynamic>>()
+        .map((jnode) {
       String nodeType = jnode["node_type"];
       if (!nodeTypeLoaders.containsKey(nodeType)) {
         throw ArgumentError("invalid node type: $nodeType");
@@ -155,14 +154,16 @@ class MultiGraph {
   }
 
   MultiGraphBackwardFlow backPropagateByTarget(
-      MultiGraphForwardFlow forwardFlow, List<FVector> target) {
+      MultiGraphForwardFlow forwardFlow, List<FVector> target,
+      {double maxErrClipAbove = 0.5}) {
     assert(forwardFlow.graph == this);
 
     List<FVector> errors = List.generate(
         target.length,
         (index) =>
             forwardFlow.nodeFeeds[outputIndices[index]]! - target[index]);
-    return backPropagateByError(forwardFlow, errors);
+    return backPropagateByError(forwardFlow, errors,
+        maxErrClipAbove: maxErrClipAbove);
 
     /*
     netOutput - target;
@@ -241,6 +242,16 @@ class MultiGraphBackwardFlow {
 class DeltaList extends Delta {
   List<Delta?> deltas;
   DeltaList(this.deltas);
+  factory DeltaList.fromJson(Map<String, dynamic> map) {
+    List<dynamic> deltas = map['d'];
+    return DeltaList(deltas.map((e) {
+      if (e is Map<String,dynamic>)
+      {
+        return Delta.fromJson(e);
+      }
+      return null;
+      }).toList());
+  }
   @override
   void add(Delta other) {
     if (other is DeltaList && other.deltas.length == this.deltas.length) {
@@ -255,5 +266,18 @@ class DeltaList extends Delta {
     for (int i = 0; i < deltas.length; ++i) {
       this.deltas[i]?.scale(factor);
     }
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'graph',
+      'd': deltas.map((e) {
+        if (e == null) {
+          return {};
+        }
+        return e.toJson();
+      }).toList()
+    };
   }
 }

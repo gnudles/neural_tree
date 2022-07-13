@@ -18,6 +18,9 @@ class BicliqueDelta implements Delta {
   final FLeftMatrix _weight;
   final FVector _bias;
   BicliqueDelta(this._weight, this._bias);
+  factory BicliqueDelta.fromJson(Map<String, dynamic> map) {
+    return BicliqueDelta(FLeftMatrix.fromJson(map['w']),FVector.fromJson(map['b']));
+  }
 
   @override
   void add(Delta other) {
@@ -31,6 +34,11 @@ class BicliqueDelta implements Delta {
   void scale(double factor) {
     this._weight.scale(factor);
     this._bias.scale(factor);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type':'biclique', 'w': _weight.toJson(), 'b': _bias.toJson()};
   }
 }
 
@@ -67,7 +75,7 @@ class BicliqueComponent extends Component {
 
   Map<String, dynamic> toJson() {
     return {
-      "type" : "biclique",
+      "type": "biclique",
       "weight": _weight.toJson(),
       "bias": _bias.toJson(),
       "activation": _activationFunc.type.toString()
@@ -116,9 +124,7 @@ class BicliqueComponent extends Component {
 
   @override
   Delta zeroDelta() {
-    return BicliqueDelta(
-      FLeftMatrix.zero(_weight.nColumns, _weight.nRows),
-      FVector.zero(_bias.nRows)
-    );
+    return BicliqueDelta(FLeftMatrix.zero(_weight.nColumns, _weight.nRows),
+        FVector.zero(_bias.nRows));
   }
 }

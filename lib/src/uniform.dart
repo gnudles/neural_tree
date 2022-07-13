@@ -18,6 +18,9 @@ class UniformDelta implements Delta {
   double _weight;
   double _bias;
   UniformDelta(this._weight, this._bias);
+  factory UniformDelta.fromJson(Map<String, dynamic> map) {
+    return UniformDelta(map['w'],map['b']);
+  }
 
   @override
   void add(Delta other) {
@@ -31,6 +34,10 @@ class UniformDelta implements Delta {
   void scale(double factor) {
     _weight*=factor;
     _bias*=factor;
+  }
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type':'uniform', 'w': _weight, 'b': _bias};
   }
 }
 

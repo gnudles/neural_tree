@@ -1,5 +1,6 @@
 import 'package:neural_tree/src/activation_function.dart';
 import 'package:neural_tree/src/linalg.dart';
+import 'package:neural_tree/src/multi_graph.dart';
 import 'package:neural_tree/src/node.dart';
 
 import 'biclique.dart';
@@ -11,6 +12,20 @@ import 'uniform.dart';
 abstract class Delta {
   void add(Delta other);
   void scale(double factor);
+  Map<String, dynamic> toJson();
+  static Delta? fromJson(Map<String, dynamic> map) {
+    var initMapping = <String, Delta Function(Map<String, dynamic>)>{
+      'graph': (map) => DeltaList.fromJson(map),
+      'biregular': (map) => BiregularDelta.fromJson(map),
+      'biclique': (map) => BicliqueDelta.fromJson(map),
+      'uniform': (map) => UniformDelta.fromJson(map),
+    };
+    if (!map.containsKey('type') || !initMapping.containsKey(map['type'])) {
+      return null;
+    }
+
+    return initMapping[map['type']]!(map);
+  }
 }
 
 /// Forward Products
@@ -77,7 +92,6 @@ abstract class Component {
   Delta zeroDelta();
   Map<String, dynamic> toJson();
 }
-
 
 Map<String, Component Function(Map<String, dynamic>)> componentLoaders = {
   'graph': (map) => GraphComponent.fromJson(map),
