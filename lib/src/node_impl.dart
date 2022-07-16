@@ -23,6 +23,6 @@ abstract class NodeImpl {
   void backPropagate(List<BackwardProducts> backProducts, List<Delta?> deltas,
       List<FVector?> propagatedErrors, List<ForwardProducts> fwdProducts);
   Delta? zeroDelta() => null;
-  void update(Delta? delta);
+  void update(Delta? delta, double maxWeight, double maxBias);
   Map<String, dynamic> toJson();
 }

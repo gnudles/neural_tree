@@ -63,7 +63,7 @@ class GraphComponent extends Component {
   }
 
   @override
-  void updateWeights(Delta delta) {
-    mGraph.update(delta as DeltaList);
+  void updateWeights(Delta delta, double maxWeight, double maxBias) {
+    mGraph.update(delta as DeltaList, maxWeight, maxBias);
   }
 }

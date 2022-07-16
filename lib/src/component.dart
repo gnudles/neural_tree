@@ -88,7 +88,7 @@ abstract class Component {
   ComponentForwardProducts produce(FVector input);
   ComponentBackwardProducts backPropagate(
       ForwardProducts fwdProducts, FVector err);
-  void updateWeights(Delta delta);
+  void updateWeights(Delta delta, double maxWeight, double maxBias);
   Delta zeroDelta();
   Map<String, dynamic> toJson();
 }

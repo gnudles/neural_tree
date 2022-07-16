@@ -186,7 +186,7 @@ class MultiGraph {
     executeChain.reversed.forEach((node) {
       //clip the error, so we don't get Nan everywhere.
       if (maxErrClipAbove != 0.0) {
-        propagatedErrors[node.id]!.clip(-maxErrClipAbove, maxErrClipAbove);
+        propagatedErrors[node.id]!.clamp(-maxErrClipAbove, maxErrClipAbove);
       }
       //do the actual stuff.
       node.backPropagate(
@@ -204,9 +204,9 @@ class MultiGraph {
     return DeltaList(deltas);
   }
 
-  void update(DeltaList delta) {
+  void update(DeltaList delta, [double maxWeight = 128, double maxBias = 128]) {
     executeChain.forEach((node) {
-      node.update(delta.deltas[node.id]);
+      node.update(delta.deltas[node.id], maxWeight, maxBias);
     });
   }
 

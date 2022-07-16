@@ -76,5 +76,5 @@ class JoinerNodeImpl extends NodeImpl {
   }
 
   @override
-  void update(Delta? delta) {}
+  void update(Delta? delta, double maxWeight , double maxBias )  {}
 }

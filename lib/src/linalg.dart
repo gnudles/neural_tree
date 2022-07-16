@@ -9,19 +9,18 @@ class OptionalDerivative<T> {
   OptionalDerivative(this.func, {this.derivative});
 }
 
+final _rowSpanSelectors = [
+  Int32x4(-1, -1, -1, -1),
+  Int32x4(-1, 0, 0, 0),
+  Int32x4(-1, -1, 0, 0),
+  Int32x4(-1, -1, -1, 0),
+];
+
 /// Simd based column vector type.
 class FVector {
   final Float32x4List columnData;
   late final Float32List listView;
   final int nRows;
-
-
-  static final _rowSpanSelectors = [
-    Int32x4(-1, -1, -1, -1),
-    Int32x4(-1, 0, 0, 0),
-    Int32x4(-1, -1, 0, 0),
-    Int32x4(-1, -1, -1, 0),
-  ];
 
   @override
   String toString() {
@@ -244,7 +243,7 @@ class FVector {
     return output;
   }
 
-  void clip(double min, double max) {
+  void clamp(double min, double max) {
     var minvec = Float32x4.splat(min);
     var maxvec = Float32x4.splat(max);
     for (int i = 0; i < columnData.length; ++i) {
@@ -253,8 +252,8 @@ class FVector {
       columnData[i] = temp.lessThan(minvec).select(minvec, temp);
     }
     //set the numbers beyond nRow to be zeros.
-    columnData.last = _rowSpanSelectors[nRows % 4]
-        .select(columnData.last, Float32x4.zero());
+    columnData.last =
+        _rowSpanSelectors[nRows % 4].select(columnData.last, Float32x4.zero());
   }
 
   /// Multiplies the vector by scalar (immutable)
@@ -643,6 +642,22 @@ class FLeftMatrix {
       }
     }
     return result;
+  }
+
+  void clamp(double min, double max) {
+    var minvec = Float32x4.splat(min);
+    var maxvec = Float32x4.splat(max);
+    for (int r = 0; r < nRows; ++r) {
+      var currentRow = this.rowsData[r];
+      for (int i = 0; i < currentRow.length; ++i) {
+        var temp = currentRow[i];
+        temp = currentRow[i].greaterThan(maxvec).select(maxvec, temp);
+        currentRow[i] = temp.lessThan(minvec).select(minvec, temp);
+      }
+      //set the numbers beyond nRow to be zeros.
+      currentRow.last = _rowSpanSelectors[nColumns % 4]
+          .select(currentRow.last, Float32x4.zero());
+    }
   }
 
   FLeftMatrix scaled(double factor) {

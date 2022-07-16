@@ -82,7 +82,7 @@ class ComponentNodeImpl extends NodeImpl {
   Delta? zeroDelta() => component.zeroDelta();
 
   @override
-  void update(Delta? delta) {
-    component.updateWeights(delta!);
+  void update(Delta? delta, double maxWeight , double maxBias )  {
+    component.updateWeights(delta!, maxWeight, maxBias);
   }
 }

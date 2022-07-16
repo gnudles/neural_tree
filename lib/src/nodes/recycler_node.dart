@@ -115,8 +115,8 @@ class RecyclerNodeImpl extends NodeImpl {
   }
 
   @override
-  void update(Delta? delta) {
-    recycled.updateWeights(delta!);
+  void update(Delta? delta, double maxWeight , double maxBias )  {
+    recycled.updateWeights(delta!, maxWeight, maxBias);
   }
 
   Delta? zeroDelta() => recycled.zeroDelta();

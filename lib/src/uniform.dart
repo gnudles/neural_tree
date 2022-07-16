@@ -19,7 +19,7 @@ class UniformDelta implements Delta {
   double _bias;
   UniformDelta(this._weight, this._bias);
   factory UniformDelta.fromJson(Map<String, dynamic> map) {
-    return UniformDelta(map['w'],map['b']);
+    return UniformDelta(map['w'], map['b']);
   }
 
   @override
@@ -32,12 +32,13 @@ class UniformDelta implements Delta {
 
   @override
   void scale(double factor) {
-    _weight*=factor;
-    _bias*=factor;
+    _weight *= factor;
+    _bias *= factor;
   }
+
   @override
   Map<String, dynamic> toJson() {
-    return {'type':'uniform', 'w': _weight, 'b': _bias};
+    return {'type': 'uniform', 'w': _weight, 'b': _bias};
   }
 }
 
@@ -71,7 +72,7 @@ class UniformComponent extends Component {
 
   Map<String, dynamic> toJson() {
     return {
-      "type" : "uniform",
+      "type": "uniform",
       "width": inWidth,
       "weight": _weight,
       "bias": _bias,
@@ -98,7 +99,8 @@ class UniformComponent extends Component {
   }
 
   @override
-  ComponentBackwardProducts backPropagate(ForwardProducts fwdProducts, FVector err) {
+  ComponentBackwardProducts backPropagate(
+      ForwardProducts fwdProducts, FVector err) {
     if (!(fwdProducts is LayerFwdProducts)) throw ArgumentError();
     FVector preActivation = fwdProducts.derivative * err;
     FVector backpropagatedError = preActivation.scaled(_weight);
@@ -111,17 +113,17 @@ class UniformComponent extends Component {
   }
 
   @override
-  void updateWeights(Delta delta) {
+  void updateWeights(Delta delta, double maxWeight, double maxBias) {
     if (delta is UniformDelta) {
       _weight -= delta._weight;
-      _bias -= delta._bias;// TODO: work with add instead of subtract
+      _weight.clamp(-maxWeight, maxWeight);
+      _bias -= delta._bias;
+      _bias.clamp(-maxBias, maxBias);
     }
   }
-    @override
+
+  @override
   Delta zeroDelta() {
-    return UniformDelta(
-      0,
-      0
-    );
+    return UniformDelta(0, 0);
   }
 }

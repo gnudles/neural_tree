@@ -9,7 +9,6 @@ class BiregularBackProducts extends LayerBackwardProducts {
       : super(forwardError, propagatedError, delta);
 }
 
-
 class BiregularDelta implements Delta {
   int get outWidth => _bias.length;
   int get inWidth => _bias.length;
@@ -20,7 +19,8 @@ class BiregularDelta implements Delta {
   BiregularDelta(this._weight, this._bias);
 
   factory BiregularDelta.fromJson(Map<String, dynamic> map) {
-    return BiregularDelta(FVector.fromJson(map['w']),FVector.fromJson(map['b']));
+    return BiregularDelta(
+        FVector.fromJson(map['w']), FVector.fromJson(map['b']));
   }
 
   @override
@@ -36,12 +36,12 @@ class BiregularDelta implements Delta {
     _weight.scale(factor);
     _bias.scale(factor);
   }
+
   @override
   Map<String, dynamic> toJson() {
-    return {'type':'biregular', 'w': _weight.toJson(), 'b': _bias.toJson()};
+    return {'type': 'biregular', 'w': _weight.toJson(), 'b': _bias.toJson()};
   }
 }
-
 
 /// (1,1) Biregular graph (Parallel Pipes)
 class BiregularComponent extends Component {
@@ -72,7 +72,7 @@ class BiregularComponent extends Component {
 
   Map<String, dynamic> toJson() {
     return {
-      "type" : "biregular",
+      "type": "biregular",
       "weight": _weight.toJson(),
       "bias": _bias.toJson(),
       "activation": _activationFunc.type.toString()
@@ -109,17 +109,18 @@ class BiregularComponent extends Component {
   }
 
   @override
-  void updateWeights(Delta delta) {
+  void updateWeights(Delta delta, double maxWeight, double maxBias) {
     if (delta is BiregularDelta) {
-      _weight.subtract(delta._weight); // TODO: work with add instead of subtract
+      _weight.subtract(delta._weight);
+      _weight.clamp(-maxWeight, maxWeight);
       _bias.subtract(delta._bias);
+      _bias.clamp(-maxBias, maxBias);
     }
   }
+
   @override
   Delta zeroDelta() {
     return BiregularDelta(
-      FVector.zero(_weight.nRows),
-      FVector.zero(_bias.nRows)
-    );
+        FVector.zero(_weight.nRows), FVector.zero(_bias.nRows));
   }
 }
