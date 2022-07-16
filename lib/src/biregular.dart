@@ -111,10 +111,10 @@ class BiregularComponent extends Component {
   @override
   void updateWeights(Delta delta, double maxWeight, double maxBias) {
     if (delta is BiregularDelta) {
-      _weight.subtract(delta._weight);
-      _weight.clamp(-maxWeight, maxWeight);
-      _bias.subtract(delta._bias);
-      _bias.clamp(-maxBias, maxBias);
+      _weight.subtract(delta._weight.clamped(-maxWeight, maxWeight));
+      //_weight.clamp(-maxWeight, maxWeight);
+      _bias.subtract(delta._bias.clamped(-maxBias, maxBias));
+      //_bias.clamp(-maxBias, maxBias);
     }
   }
 

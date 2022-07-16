@@ -256,6 +256,22 @@ class FVector {
         _rowSpanSelectors[nRows % 4].select(columnData.last, Float32x4.zero());
   }
 
+  FVector clamped(double min, double max) {
+    FVector newVec = FVector.zero(nRows);
+    var minvec = Float32x4.splat(min);
+    var maxvec = Float32x4.splat(max);
+    Float32x4List newColumnData = newVec.columnData;
+    for (int i = 0; i < columnData.length; ++i) {
+      var temp = columnData[i];
+      temp = columnData[i].greaterThan(maxvec).select(maxvec, temp);
+      newColumnData[i] = temp.lessThan(minvec).select(minvec, temp);
+    }
+    //set the numbers beyond nRow to be zeros.
+    newColumnData.last = _rowSpanSelectors[nRows % 4]
+        .select(newColumnData.last, Float32x4.zero());
+    return newVec;
+  }
+
   /// Multiplies the vector by scalar (immutable)
   FVector scaled(double factor) {
     FVector newVec = FVector.zero(nRows);
@@ -658,6 +674,24 @@ class FLeftMatrix {
       currentRow.last = _rowSpanSelectors[nColumns % 4]
           .select(currentRow.last, Float32x4.zero());
     }
+  }
+
+  FLeftMatrix clamped(double min, double max) {
+    var minvec = Float32x4.splat(min);
+    var maxvec = Float32x4.splat(max);
+    FLeftMatrix result = FLeftMatrix.zero(this.nColumns, this.nRows);
+    for (int r = 0; r < nRows; ++r) {
+      var currentRow = this.rowsData[r];
+      Float32x4List resultRow = result.rowsData[r];
+      for (int i = 0; i < currentRow.length; ++i) {
+        var temp = currentRow[i];
+        temp = currentRow[i].greaterThan(maxvec).select(maxvec, temp);
+        resultRow[i] = temp.lessThan(minvec).select(minvec, temp);
+      }
+      resultRow.last = _rowSpanSelectors[nColumns % 4]
+          .select(resultRow.last, Float32x4.zero());
+    }
+    return result;
   }
 
   FLeftMatrix scaled(double factor) {

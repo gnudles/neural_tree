@@ -115,10 +115,10 @@ class UniformComponent extends Component {
   @override
   void updateWeights(Delta delta, double maxWeight, double maxBias) {
     if (delta is UniformDelta) {
-      _weight -= delta._weight;
-      _weight.clamp(-maxWeight, maxWeight);
-      _bias -= delta._bias;
-      _bias.clamp(-maxBias, maxBias);
+      _weight -= delta._weight.clamp(-maxWeight, maxWeight);
+      //_weight.clamp(-maxWeight, maxWeight);
+      _bias -= delta._bias.clamp(-maxBias, maxBias);
+      //_bias.clamp(-maxBias, maxBias);
     }
   }
 

@@ -204,7 +204,7 @@ class MultiGraph {
     return DeltaList(deltas);
   }
 
-  void update(DeltaList delta, [double maxWeight = 128, double maxBias = 128]) {
+  void update(DeltaList delta, [double maxWeight = 0.2, double maxBias = 0.2]) {
     executeChain.forEach((node) {
       node.update(delta.deltas[node.id], maxWeight, maxBias);
     });
