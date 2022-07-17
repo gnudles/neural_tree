@@ -302,6 +302,15 @@ class FVector {
     return newVec;
   }
 
+  /// Dot Product (mutable)
+  void dotProduct(FVector other) {
+    assert(nRows == other.nRows);
+
+    for (int i = 0; i < columnData.length; ++i) {
+      columnData[i] = columnData[i] * other.columnData[i];
+    }
+  }
+
   /// Add vector (mutable)
   void add(FVector other) {
     assert(nRows == other.nRows);
@@ -407,6 +416,7 @@ class FVector {
     for (int i = 1; i < columnData.length; ++i) sum += columnData[i];
     return sum.x + sum.y + sum.z + sum.w;
   }
+
 
   FVector operator +(FVector other) {
     assert(nRows == other.nRows);

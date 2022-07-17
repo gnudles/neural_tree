@@ -17,8 +17,6 @@ class JoinerNode extends MultiInputNode {
   NodeImpl createImplementation(int id, Int32List dependencies) {
     Int32List lengths = Int32List.fromList(
         inputNodes.map((n) => n.outWidth).toList(growable: false));
-    int outWidth = inputNodes.fold<int>(
-        0, (previousValue, element) => previousValue + element.outWidth);
         
     return JoinerNodeImpl(id, name, outWidth, dependencies, lengths);
   }
