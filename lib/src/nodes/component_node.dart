@@ -13,7 +13,11 @@ import '../node_impl.dart';
 class ComponentNode extends SingleInputNode {
   Component component;
   ComponentNode(this.component, Node input, {String name = ""})
-      : super(input, component.outWidth, name);
+      : super(input, component.outWidth, name) {
+    if (component.inWidth != input.outWidth) {
+      throw ArgumentError("ComponentNode got unmatched input and component widths");
+    }
+  }
 
   @override
   NodeImpl createImplementation(int id, Int32List dependencies) {
@@ -21,28 +25,26 @@ class ComponentNode extends SingleInputNode {
   }
 }
 
-
-
 class ComponentNodeImpl extends NodeImpl {
   Component component;
   ComponentNodeImpl(int id, String name, Int32List dependencies, this.component)
       : super(id, name, component.outWidth, dependencies);
 
-    factory ComponentNodeImpl.fromJson(Map<String, dynamic> map) {
+  factory ComponentNodeImpl.fromJson(Map<String, dynamic> map) {
     int id = map['id'];
     //int outWidth = map['outWidth'];
     Int32List dependencies =
         Int32List.fromList((map['dependencies'] as List<dynamic>).cast());
     String name = map['name'];
-    Component component = componentLoaders[map['component']['type']]!(map['component']);
+    Component component =
+        componentLoaders[map['component']['type']]!(map['component']);
 
-    return ComponentNodeImpl(
-        id, name, dependencies, component);
+    return ComponentNodeImpl(id, name, dependencies, component);
   }
   @override
   Map<String, dynamic> toJson() {
     return {
-      'node_type':'component',
+      'node_type': 'component',
       'id': id,
       'name': name,
       'outWidth': outWidth,
@@ -79,10 +81,11 @@ class ComponentNodeImpl extends NodeImpl {
     }
     deltas[id] = bproducts.abstractDelta;
   }
+
   Delta? zeroDelta() => component.zeroDelta();
 
   @override
-  void update(Delta? delta, double maxWeight , double maxBias )  {
+  void update(Delta? delta, double maxWeight, double maxBias) {
     component.updateWeights(delta!, maxWeight, maxBias);
   }
 }

@@ -125,13 +125,15 @@ class MultiGraph {
     return MultiGraph._(totalInputs, totalOutputs, executeChain, inputWidth,
         inputNames, outputIndices, outputWidth, outputNames, totalNodes);
   }
-  List<FVector> feedForward(List<FVector> inputs) {
+  List<FVector> feedForward(Iterable<FVector> inputs) {
     if (inputs.length != totalInputs) {
       throw ArgumentError("number of inputs does not match");
     }
     List<FVector?> nodeFeeds = List.filled(totalNodes, null);
+    var inputIter = inputs.iterator;
     for (int i = 0; i < totalInputs; ++i) {
-      nodeFeeds[i] = inputs[i];
+      inputIter.moveNext();
+      nodeFeeds[i] = inputIter.current;
     }
     executeChain.forEach((element) {
       element.execute(nodeFeeds, null);
@@ -141,15 +143,17 @@ class MultiGraph {
         .toList(growable: false);
   }
 
-  MultiGraphForwardFlow produce(List<FVector> inputs) {
+  MultiGraphForwardFlow produce(Iterable<FVector> inputs) {
     if (inputs.length != totalInputs) {
       throw ArgumentError("number of inputs does not match");
     }
     List<FVector?> nodeFeeds = List.filled(totalNodes, null);
     List<ForwardProducts> fwdProducts =
         List.filled(totalNodes, ForwardProducts());
+    var inputIter = inputs.iterator;
     for (int i = 0; i < totalInputs; ++i) {
-      nodeFeeds[i] = inputs[i];
+      inputIter.moveNext();
+      nodeFeeds[i] = inputIter.current;
     }
     executeChain.forEach((element) {
       element.execute(nodeFeeds, fwdProducts);
@@ -158,14 +162,17 @@ class MultiGraph {
   }
 
   MultiGraphBackwardFlow backPropagateByTarget(
-      MultiGraphForwardFlow forwardFlow, List<FVector> target,
+      MultiGraphForwardFlow forwardFlow, Iterable<FVector> target,
       {double maxErrClipAbove = 0.5}) {
     assert(forwardFlow.graph == this);
+    var targetIter = target.iterator;
 
-    List<FVector> errors = List.generate(
-        target.length,
-        (index) =>
-            forwardFlow.nodeFeeds[outputIndices[index]]! - target[index]);
+    List<FVector> errors = List.generate(totalOutputs, (index) {
+      if (!targetIter.moveNext()) {
+        throw ArgumentError("missing more targets");
+      }
+      return forwardFlow.nodeFeeds[outputIndices[index]]! - targetIter.current;
+    });
     return backPropagateByError(forwardFlow, errors,
         maxErrClipAbove: maxErrClipAbove);
 
@@ -175,7 +182,7 @@ class MultiGraph {
   }
 
   MultiGraphBackwardFlow backPropagateByError(
-      MultiGraphForwardFlow forwardFlow, List<FVector> errors,
+      MultiGraphForwardFlow forwardFlow, Iterable<FVector> errors,
       {double maxErrClipAbove = 0.5}) {
     if (errors.length != totalOutputs)
       throw ArgumentError("errors length is incorrect");
@@ -183,9 +190,10 @@ class MultiGraph {
     List<Delta?> deltas = List.filled(totalNodes, null);
     List<BackwardProducts> backProducts =
         List.filled(totalNodes, BackwardProducts());
-
+    var errorsIter = errors.iterator;
     for (int i = 0; i < totalOutputs; ++i) {
-      propagatedErrors[outputIndices[i]] = errors[i];
+      errorsIter.moveNext();
+      propagatedErrors[outputIndices[i]] = errorsIter.current;
     }
     executeChain.reversed.forEach((node) {
       //clip the error, so we don't get Nan everywhere.
@@ -249,12 +257,11 @@ class DeltaList extends Delta {
   factory DeltaList.fromJson(Map<String, dynamic> map) {
     List<dynamic> deltas = map['d'];
     return DeltaList(deltas.map((e) {
-      if (e is Map<String,dynamic>)
-      {
+      if (e is Map<String, dynamic>) {
         return Delta.fromJson(e);
       }
       return null;
-      }).toList());
+    }).toList());
   }
   @override
   void add(Delta other) {

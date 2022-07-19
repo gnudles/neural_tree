@@ -37,10 +37,18 @@ class FVector {
   FVector.zero(this.nRows) : columnData = Float32x4List((nRows + 3) ~/ 4) {
     listView = columnData.buffer.asFloat32List(0, nRows);
   }
-  FVector.fromList(List<double> list)
+  FVector.fromList(Iterable<double> list)
       : nRows = list.length,
         columnData = Float32List.fromList(
                 list.followedBy([0, 0, 0]).toList(growable: false))
+            .buffer
+            .asFloat32x4List() {
+    listView = columnData.buffer.asFloat32List(0, nRows);
+  }
+  FVector.fromListInt(Iterable<int> list)
+      : nRows = list.length,
+        columnData = Float32List.fromList(
+                list.followedBy([0, 0, 0]).map((e) => e.toDouble()).toList(growable: false))
             .buffer
             .asFloat32x4List() {
     listView = columnData.buffer.asFloat32List(0, nRows);
