@@ -38,6 +38,12 @@ class BiregularDelta implements Delta {
   }
 
   @override
+  void clamp(double maxVal) {
+    this._weight.clamp(-maxVal, maxVal);
+    this._bias.clamp(-maxVal, maxVal);
+  }
+
+  @override
   Map<String, dynamic> toJson() {
     return {'type': 'biregular', 'w': _weight.toJson(), 'b': _bias.toJson()};
   }

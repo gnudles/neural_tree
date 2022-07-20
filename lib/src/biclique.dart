@@ -41,6 +41,12 @@ class BicliqueDelta implements Delta {
   Map<String, dynamic> toJson() {
     return {'type': 'biclique', 'w': _weight.toJson(), 'b': _bias.toJson()};
   }
+
+  @override
+  void clamp(double maxVal) {
+    this._weight.clamp(-maxVal, maxVal);
+    this._bias.clamp(-maxVal, maxVal);
+  }
 }
 
 /// Fully Connected Layer.

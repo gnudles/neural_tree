@@ -12,6 +12,8 @@ import 'uniform.dart';
 abstract class Delta {
   void add(Delta other);
   void scale(double factor);
+  void clamp(double maxVal);
+
   Map<String, dynamic> toJson();
   static Delta? fromJson(Map<String, dynamic> map) {
     var initMapping = <String, Delta Function(Map<String, dynamic>)>{

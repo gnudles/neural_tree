@@ -37,6 +37,12 @@ class UniformDelta implements Delta {
   }
 
   @override
+  void clamp(double maxVal) {
+    _weight = _weight.clamp(-maxVal, maxVal);
+    _bias = _bias.clamp(-maxVal, maxVal);
+  }
+
+  @override
   Map<String, dynamic> toJson() {
     return {'type': 'uniform', 'w': _weight, 'b': _bias};
   }

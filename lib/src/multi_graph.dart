@@ -278,6 +278,12 @@ class DeltaList extends Delta {
       this.deltas[i]?.scale(factor);
     }
   }
+  @override
+  void clamp(double maxVal) {
+    for (int i = 0; i < deltas.length; ++i) {
+      this.deltas[i]?.clamp(maxVal);
+    }
+  }
 
   @override
   Map<String, dynamic> toJson() {
