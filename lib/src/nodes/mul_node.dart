@@ -8,7 +8,7 @@ import '../node_impl.dart';
 class MulNode extends MultiInputNode {
   MulNode(List<Node> inputNodes, {String name = ""})
       : super(inputNodes, inputNodes[0].outWidth, name) {
-    if (!inputNodes.skip(1).every((element) => element.outWidth != outWidth)) {
+    if (!inputNodes.skip(1).every((element) => element.outWidth == outWidth)) {
       throw ArgumentError("sizes of inputs are not equal to each other.");
     }
   }
