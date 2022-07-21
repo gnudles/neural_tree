@@ -11,6 +11,7 @@ import 'package:neural_tree/src/nodes/reverse_node.dart';
 import 'package:neural_tree/src/nodes/range_node.dart';
 import 'package:neural_tree/src/nodes/sum_node.dart';
 import 'component.dart';
+import 'nodes/activation_node.dart';
 import 'nodes/mul_node.dart';
 
 List<NodeImpl> sortChain(
@@ -43,6 +44,7 @@ Map<String, NodeImpl Function(Map<String, dynamic>)> nodeTypeLoaders = {
   'reverse': (map) => ReverseNodeImpl.fromJson(map),
   'sum': (map) => SumNodeImpl.fromJson(map),
   'mul': (map) => MulNodeImpl.fromJson(map),
+  'activation':(map) => ActivationNodeImpl.fromJson(map),
 };
 
 /// Graph with multiple inputs and multiple outputs

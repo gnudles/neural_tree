@@ -1,7 +1,9 @@
 import 'package:neural_tree/src/activation_function.dart';
+import 'package:neural_tree/src/bias_component.dart';
 import 'package:neural_tree/src/linalg.dart';
 import 'package:neural_tree/src/multi_graph.dart';
 import 'package:neural_tree/src/node.dart';
+import 'package:neural_tree/src/weight_component.dart';
 
 import 'biclique.dart';
 import 'biregular.dart';
@@ -21,6 +23,8 @@ abstract class Delta {
       'biregular': (map) => BiregularDelta.fromJson(map),
       'biclique': (map) => BicliqueDelta.fromJson(map),
       'uniform': (map) => UniformDelta.fromJson(map),
+      'bias': (map) => BiasDelta.fromJson(map),
+      'weight': (map) => WeightDelta.fromJson(map),
     };
     if (!map.containsKey('type') || !initMapping.containsKey(map['type'])) {
       return null;
@@ -79,6 +83,13 @@ class LayerFwdProducts extends ComponentForwardProducts {
   final FVector derivative;
   const LayerFwdProducts(this.input, this.activation, this.derivative);
 }
+class OperatorFwdProducts extends ComponentForwardProducts {
+  @override
+  FVector get output => activation;
+  final FVector input;
+  final FVector activation;
+  const OperatorFwdProducts(this.input, this.activation);
+}
 
 abstract class Component {
   final int _inWidth;
@@ -100,4 +111,6 @@ Map<String, Component Function(Map<String, dynamic>)> componentLoaders = {
   'uniform': (map) => UniformComponent.fromJson(map),
   'biregular': (map) => BiregularComponent.fromJson(map),
   'biclique': (map) => BicliqueComponent.fromJson(map),
+  'weight': (map) => WeightComponent.fromJson(map),
+  'bias': (map) => BiasComponent.fromJson(map),
 };
