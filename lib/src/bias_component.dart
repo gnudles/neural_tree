@@ -14,7 +14,7 @@ class BiasDelta implements Delta {
   int get inWidth => _bias.length;
   FVector get bias => _bias;
   final FVector _bias;
-  BiasDelta( this._bias);
+  BiasDelta(this._bias);
 
   factory BiasDelta.fromJson(Map<String, dynamic> map) {
     return BiasDelta(FVector.fromJson(map['b']));
@@ -34,7 +34,12 @@ class BiasDelta implements Delta {
 
   @override
   void clamp(double maxVal) {
-    this._bias.clamp(-maxVal, maxVal);
+    _bias.clamp(-maxVal, maxVal);
+  }
+
+  @override
+  double minAbsDelta() {
+    return _bias.abs().smallestElement();
   }
 
   @override
@@ -43,13 +48,11 @@ class BiasDelta implements Delta {
   }
 }
 
-
 class BiasComponent extends Component {
   FVector _bias;
   BiasComponent(int width, this._bias) : super(width, width);
 
-  factory BiasComponent.random(
-      int width, double Function() randomBias) {
+  factory BiasComponent.random(int width, double Function() randomBias) {
     FVector bias = FVector.generate(width, (i) => randomBias());
     return BiasComponent(width, bias);
   }
@@ -67,24 +70,20 @@ class BiasComponent extends Component {
 
   @override
   FVector feedForward(FVector input) {
-    return ( input + _bias);
-    
+    return (input + _bias);
   }
 
   @override
   ComponentForwardProducts produce(FVector input) {
     FVector intermediateVector = input + _bias;
-    return OperatorFwdProducts(
-        input,
-        intermediateVector);
+    return OperatorFwdProducts(input, intermediateVector);
   }
 
   @override
   ComponentBackwardProducts backPropagate(
       ForwardProducts fwdProducts, FVector err) {
     if (!(fwdProducts is OperatorFwdProducts)) throw ArgumentError();
-    return BiasBackProducts(err, err,
-        BiasDelta(err));
+    return BiasBackProducts(err, err, BiasDelta(err));
   }
 
   @override

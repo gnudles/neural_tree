@@ -15,6 +15,7 @@ abstract class Delta {
   void add(Delta other);
   void scale(double factor);
   void clamp(double maxVal);
+  double minAbsDelta();
 
   Map<String, dynamic> toJson();
   static Delta? fromJson(Map<String, dynamic> map) {
@@ -83,6 +84,7 @@ class LayerFwdProducts extends ComponentForwardProducts {
   final FVector derivative;
   const LayerFwdProducts(this.input, this.activation, this.derivative);
 }
+
 class OperatorFwdProducts extends ComponentForwardProducts {
   @override
   FVector get output => activation;

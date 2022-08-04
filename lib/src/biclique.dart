@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:neural_tree/src/activation_function.dart';
 import 'package:neural_tree/src/component.dart';
 import 'package:neural_tree/src/linalg.dart';
@@ -46,6 +48,10 @@ class BicliqueDelta implements Delta {
   void clamp(double maxVal) {
     this._weight.clamp(-maxVal, maxVal);
     this._bias.clamp(-maxVal, maxVal);
+  }
+  @override
+  double minAbsDelta() {
+    return min (_bias.abs().smallestElement(), _weight.asFVector().abs().smallestElement());
   }
 }
 

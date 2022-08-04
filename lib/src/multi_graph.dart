@@ -44,7 +44,7 @@ Map<String, NodeImpl Function(Map<String, dynamic>)> nodeTypeLoaders = {
   'reverse': (map) => ReverseNodeImpl.fromJson(map),
   'sum': (map) => SumNodeImpl.fromJson(map),
   'mul': (map) => MulNodeImpl.fromJson(map),
-  'activation':(map) => ActivationNodeImpl.fromJson(map),
+  'activation': (map) => ActivationNodeImpl.fromJson(map),
 };
 
 /// Graph with multiple inputs and multiple outputs
@@ -280,11 +280,28 @@ class DeltaList extends Delta {
       this.deltas[i]?.scale(factor);
     }
   }
+
   @override
   void clamp(double maxVal) {
     for (int i = 0; i < deltas.length; ++i) {
       this.deltas[i]?.clamp(maxVal);
     }
+  }
+
+  @override
+  double minAbsDelta() {
+    double minAbsDelta = 0;
+    double currentMin;
+    for (int i = 1; i < deltas.length; ++i) {
+      var currentDelta = deltas[i];
+      if (currentDelta != null) {
+        currentMin = currentDelta.minAbsDelta();
+        if (minAbsDelta == 0 || currentMin < minAbsDelta) {
+          minAbsDelta = currentMin;
+        }
+      }
+    }
+    return minAbsDelta;
   }
 
   @override

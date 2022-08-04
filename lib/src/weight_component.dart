@@ -23,7 +23,7 @@ class WeightDelta implements Delta {
   @override
   void add(Delta other) {
     if (other is WeightDelta) {
-      this._weight.add(other._weight);
+      _weight.add(other._weight);
     }
   }
 
@@ -34,7 +34,11 @@ class WeightDelta implements Delta {
 
   @override
   void clamp(double maxVal) {
-    this._weight.clamp(-maxVal, maxVal);
+    _weight.clamp(-maxVal, maxVal);
+  }
+  @override
+  double minAbsDelta() {
+    return _weight.abs().smallestElement();
   }
 
   @override

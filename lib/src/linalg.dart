@@ -47,8 +47,10 @@ class FVector {
   }
   FVector.fromListInt(Iterable<int> list)
       : nRows = list.length,
-        columnData = Float32List.fromList(
-                list.followedBy([0, 0, 0]).map((e) => e.toDouble()).toList(growable: false))
+        columnData = Float32List.fromList(list
+                .followedBy([0, 0, 0])
+                .map((e) => e.toDouble())
+                .toList(growable: false))
             .buffer
             .asFloat32x4List() {
     listView = columnData.buffer.asFloat32List(0, nRows);
@@ -425,7 +427,6 @@ class FVector {
     return sum.x + sum.y + sum.z + sum.w;
   }
 
-
   FVector operator +(FVector other) {
     assert(nRows == other.nRows);
     FVector newVec = FVector.zero(nRows);
@@ -710,6 +711,23 @@ class FLeftMatrix {
           .select(resultRow.last, Float32x4.zero());
     }
     return result;
+  }
+
+  FLeftMatrix abs() {
+    FLeftMatrix newMat = FLeftMatrix.zero(nColumns, nRows);
+    for (int i = 0; i < nRows; ++i) {
+      Float32x4List currentRow = rowsData[i];
+      Float32x4List resultRow = newMat.rowsData[i];
+
+      for (int j = 0; j < currentRow.length; ++j) {
+        resultRow[j] = currentRow[j].abs();
+      }
+    }
+    return newMat;
+  }
+
+  FVector asFVector() {
+    return FVector.join(rowsData.map((e) => FVector.fromBuffer(nColumns, e)).toList());
   }
 
   FLeftMatrix scaled(double factor) {

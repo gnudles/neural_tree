@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:neural_tree/src/activation_function.dart';
 import 'package:neural_tree/src/component.dart';
 import 'package:neural_tree/src/linalg.dart';
@@ -40,6 +42,10 @@ class UniformDelta implements Delta {
   void clamp(double maxVal) {
     _weight = _weight.clamp(-maxVal, maxVal);
     _bias = _bias.clamp(-maxVal, maxVal);
+  }
+  @override
+  double minAbsDelta() {
+    return min(_bias.abs(), _weight.abs());
   }
 
   @override

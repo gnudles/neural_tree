@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:neural_tree/src/activation_function.dart';
 import 'package:neural_tree/src/component.dart';
 import 'package:neural_tree/src/linalg.dart';
@@ -43,6 +45,11 @@ class BiregularDelta implements Delta {
     this._bias.clamp(-maxVal, maxVal);
   }
 
+  @override
+  double minAbsDelta() {
+    return min (_bias.abs().smallestElement(), _weight.abs().smallestElement());
+  }
+  
   @override
   Map<String, dynamic> toJson() {
     return {'type': 'biregular', 'w': _weight.toJson(), 'b': _bias.toJson()};
